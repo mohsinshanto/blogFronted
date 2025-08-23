@@ -19,8 +19,8 @@ export default function PostsPage() {
       {token && <Link href="/create-post"><button>Create New Post</button></Link>}
       <ul>
         {posts.map(p => (
-          <li key={p.userid}>
-            <Link href={`/posts/${p.userid}`}>{p.title}</Link>
+          <li key={p.ID}>
+            <Link href={`/posts/${p.ID}`}><b>{p.title}</b></Link>
           </li>
         ))}
       </ul>
