@@ -1,29 +1,61 @@
-import { useEffect, useState, useContext } from "react";
+// pages/create-post.js
+import { useState, useContext } from "react";
+import { useRouter } from "next/router";
 import api from "../lib/axios";
 import { AuthContext } from "../context/AuthContext";
-import Link from "next/link";
 
-export default function PostsPage() {
-  const { token } = useContext(AuthContext);
-  const [posts, setPosts] = useState([]);
+export default function CreatePost() {
+  const router = useRouter();
+  const { token } = useContext(AuthContext); // token from login
+  const [form, setForm] = useState({ title: "", content: "" });
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    api.get("/api/getPosts")
-      .then(res => setPosts(res.data.posts))
-      .catch(err => console.error(err));
-  }, []);
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await api.post(
+        "/api/create",
+        { title: form.title, content: form.content },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // send token in header
+          },
+        }
+      );
+      alert("Post created successfully");
+      router.push("/posts");
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.msg || "Create failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <h1>All Posts</h1>
-      {token && <Link href="/create-post"><button>Create New Post</button></Link>}
-      <ul>
-        {posts.map(p => (
-          <li key={p.ID}>
-            <Link href={`/posts/${p.ID}`}>{p.Title}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
+      <input
+        name="title"
+        value={form.title}
+        onChange={handleChange}
+        placeholder="Title"
+        required
+      /><br />
+      <textarea
+        name="content"
+        value={form.content}
+        onChange={handleChange}
+        placeholder="Content"
+         style={{ width: "100%", height: "100px" }}
+        required
+      /><br />
+      <button type="submit" disabled={loading}>
+        {loading ? "Creating..." : "Create Post"}
+      </button>
+    </form>
   );
 }
