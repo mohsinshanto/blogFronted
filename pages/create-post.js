@@ -50,7 +50,7 @@ export default function CreatePost() {
         value={form.content}
         onChange={handleChange}
         placeholder="Content"
-         style={{ width: "100%", height: "100px" }}
+         style={{ width: "150px", height: "100px" }}
         required
       /><br />
       <button type="submit" disabled={loading}>
