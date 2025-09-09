@@ -19,9 +19,10 @@ export default function Profile() {
       return;
     }
 
-    api.get("/api/user/profile", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    api
+      .get("/api/user/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         setProfile(res.data);
         setUsername(res.data.username);

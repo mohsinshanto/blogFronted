@@ -15,7 +15,7 @@ export default function Home() {
     localStorage.removeItem("token");
     alert("Logged out!");
     setLoggedIn(false);
-    router.push("/login");
+    router.push("/");
   };
 
   return (

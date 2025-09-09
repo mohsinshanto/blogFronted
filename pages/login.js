@@ -1,12 +1,15 @@
-
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
 // Dynamically import icons to avoid SSR issues
-const Eye = dynamic(() => import("lucide-react").then(mod => mod.Eye), { ssr: false });
-const EyeOff = dynamic(() => import("lucide-react").then(mod => mod.EyeOff), { ssr: false });
+const Eye = dynamic(() => import("lucide-react").then((mod) => mod.Eye), {
+  ssr: false,
+});
+const EyeOff = dynamic(() => import("lucide-react").then((mod) => mod.EyeOff), {
+  ssr: false,
+});
 
 export default function LoginPage() {
   const { login } = useContext(AuthContext);
@@ -22,11 +25,12 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login(form.email, form.password);
+
       setMessage("Login successful");
       setTimeout(() => {
         setMessage(null);
         router.push("/posts");
-      }, 2000);
+      }, 1000);
     } catch (err) {
       setMessage(err.response?.data?.msg || "Login failed");
       setTimeout(() => setMessage(null), 3000);
@@ -36,12 +40,8 @@ export default function LoginPage() {
   return (
     <div style={{ textAlign: "center" }}>
       <form onSubmit={handleSubmit}>
-        <input
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-        /> <br />
-
+        <input name="email" placeholder="Email" onChange={handleChange} />{" "}
+        <br />
         <div style={{ position: "relative", display: "inline-block" }}>
           <input
             name="password"
@@ -56,13 +56,13 @@ export default function LoginPage() {
               right: "10px",
               top: "50%",
               transform: "translateY(-50%)",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </span>
-        </div> <br />
-
+        </div>{" "}
+        <br />
         <button type="submit">Login</button>
       </form>
 
@@ -70,4 +70,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
