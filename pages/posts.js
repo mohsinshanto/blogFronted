@@ -4,14 +4,13 @@ import { AuthContext } from "../context/AuthContext";
 import Link from "next/link";
 
 export default function PostsPage() {
-  const { token, user } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
   const [sort, setSort] = useState("desc");
   const [search, setSearch] = useState("");
   const [total, setTotal] = useState(0);
-  const [userFilter, setUserFilter] = useState(null); // null = all posts, number = user ID
 
   const fetchPosts = () => {
     api
@@ -21,7 +20,6 @@ export default function PostsPage() {
           limit,
           sort,
           search,
-          user_id: userFilter || undefined,
         },
       })
       .then((res) => {
@@ -33,7 +31,7 @@ export default function PostsPage() {
 
   useEffect(() => {
     fetchPosts();
-  }, [page, sort, search, userFilter]);
+  }, [page, sort, search]);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -42,38 +40,9 @@ export default function PostsPage() {
       <h1>All Posts</h1>
 
       {token && (
-        <>
-          <Link href="/create-post">
-            <button style={{ margin: "10px" }}>Create New Post</button>
-          </Link>
-
-          {/* Filter: All Posts / My Posts */}
-          <div style={{ margin: "10px" }}>
-            <button
-              style={{
-                fontWeight: userFilter === null ? "bold" : "normal",
-                marginRight: "10px",
-              }}
-              onClick={() => {
-                setUserFilter(null);
-                setPage(1); // reset page when switching filter
-              }}
-            >
-              All Posts
-            </button>
-            <button
-              style={{
-                fontWeight: userFilter === user?.ID ? "bold" : "normal",
-              }}
-              onClick={() => {
-                setUserFilter(user?.ID);
-                setPage(1); // reset page when switching filter
-              }}
-            >
-              My Posts
-            </button>
-          </div>
-        </>
+        <Link href="/create-post">
+          <button style={{ margin: "10px" }}>Create New Post</button>
+        </Link>
       )}
 
       {/* Search */}
@@ -108,8 +77,7 @@ export default function PostsPage() {
 
       {/* Current Filters */}
       <div style={{ margin: "10px" }}>
-        <strong>Filters Applied:</strong>{" "}
-        {userFilter === user?.ID ? "User: My Posts" : "User: All Posts"} | Sort:{" "}
+        <strong>Filters Applied:</strong> Sort:{" "}
         {sort === "desc" ? "Newest First" : "Oldest First"} | Search:{" "}
         {search ? `"${search}"` : "None"}
       </div>

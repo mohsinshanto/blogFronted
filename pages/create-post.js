@@ -49,7 +49,7 @@ export default function CreatePost() {
           title: form.title,
           content: form.content,
           published: form.published,
-          draft: form.draft
+          draft: form.draft,
         },
         {
           headers: {
@@ -58,7 +58,12 @@ export default function CreatePost() {
         }
       );
       alert("Post created successfully");
-      router.push("/posts");
+      // router.push("/posts");
+      if (form.draft) {
+        router.push("/dashboard");
+      } else {
+        router.push("/posts");
+      }
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.msg || "Create failed");
