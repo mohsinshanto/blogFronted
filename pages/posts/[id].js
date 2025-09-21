@@ -15,11 +15,17 @@ export default function SinglePost() {
     draft: true,
   });
 
+  // ---- Comments state ----
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+
+  // Fetch post
   useEffect(() => {
     if (!id) return;
     api
       .get(`/api/singlePost/${id}`)
       .then((res) => {
+        console.log(res.data);
         setPost(res.data);
         setForm({
           title: res.data.title,
@@ -30,6 +36,21 @@ export default function SinglePost() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  }, [id]);
+
+  // Fetch comments
+  const fetchComments = async () => {
+    if (!id) return;
+    try {
+      const res = await api.get(`/comments/post/${id}`);
+      setComments(res.data);
+    } catch (err) {
+      console.error("Failed to load comments", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
   }, [id]);
 
   const handleChange = (e) => {
@@ -89,6 +110,24 @@ export default function SinglePost() {
       router.push("/posts"); // redirect back to posts list
     } catch (err) {
       alert(err.response?.data?.msg || "Delete failed");
+    }
+  };
+
+  // ---- Handle adding a comment ----
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+    try {
+      const res = await api.post(
+        "/comments/",
+        { content: newComment, post_id: Number(id) }, // ✅ fixed: ensure post_id is number
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setNewComment("");
+      fetchComments(); // refresh after adding
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to add comment");
     }
   };
 
@@ -165,9 +204,7 @@ export default function SinglePost() {
         <div>
           <h1>{post.title}</h1>
           <p>{post.content}</p>
-          <small>
-            Post ID: {post.id} | User ID: {post.user_id}
-          </small>
+          <small>Posted By: {post.user.username}</small>
           <div style={{ marginTop: "10px" }}>
             <button style={buttonStyle} onClick={() => setEditing(true)}>
               Edit
@@ -178,6 +215,37 @@ export default function SinglePost() {
           </div>
         </div>
       )}
+
+      {/* ---- Comments Section ---- */}
+      <div style={{ marginTop: "30px" }}>
+        <h3>Comments</h3>
+        {comments.length === 0 ? (
+          <p>No comments yet.</p>
+        ) : (
+          <ul>
+            {comments.map((c) => (
+              <li key={c.id} style={{ marginBottom: "8px" }}>
+                {c.content} <small>(commented by: {c.username})</small>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {localStorage.getItem("token") && (
+          <div style={{ marginTop: "10px" }}>
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write a comment..."
+              rows="3"
+              style={{ width: "100%", marginBottom: "5px" }}
+            />
+            <button style={buttonStyle} onClick={handleAddComment}>
+              Submit
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

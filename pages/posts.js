@@ -1,3 +1,4 @@
+// pages/posts.js
 import { useEffect, useState, useContext } from "react";
 import api from "../lib/axios";
 import { AuthContext } from "../context/AuthContext";

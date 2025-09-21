@@ -13,7 +13,8 @@ export default function Home() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    alert("Logged out!");
+    localStorage.removeItem("user");
+    //alert("Logged out!");
     setLoggedIn(false);
     router.push("/");
   };

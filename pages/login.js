@@ -27,10 +27,11 @@ export default function LoginPage() {
       await login(form.email, form.password);
 
       setMessage("Login successful");
-      setTimeout(() => {
-        setMessage(null);
-        router.push("/posts");
-      }, 1000);
+      router.push("/posts");
+      // setTimeout(() => {
+      //   setMessage(null);
+      //   router.push("/posts");
+      // }, 1000);
     } catch (err) {
       setMessage(err.response?.data?.msg || "Login failed");
       setTimeout(() => setMessage(null), 3000);
@@ -66,7 +67,7 @@ export default function LoginPage() {
         <button type="submit">Login</button>
       </form>
 
-      {message && <p>{message}</p>}
+      {/* {message && <p>{message}</p>} */}
     </div>
   );
 }
