@@ -19,15 +19,12 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       const res = await register(form.username, form.email, form.password);
-      setMessage(res.msg);
-      setType("success");
-      setTimeout(() => setMessage(""), 1500);
       router.push("/login");
     } catch (err) {
       console.error(err);
       setMessage(err.response?.data?.msg || "Registration failed");
       setType("error");
-      setTimeout(() => setMessage(""), 3000);
+      setTimeout(() => setMessage(""), 1500);
     }
   };
 
